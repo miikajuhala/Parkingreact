@@ -1,3 +1,13 @@
+
+# First actual React project.
+# Server published as Reactspringserver :)
+
+
+
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
