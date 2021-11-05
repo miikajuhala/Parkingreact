@@ -1,11 +1,22 @@
 import React from "react";
 import axios from "axios";
 import { useEffect } from "react";
-
+import CarRepairOutlinedIcon from '@mui/icons-material/CarRepairOutlined';
+import { makeStyles } from "@material-ui/core/styles";
+import Tooltip from '@mui/material/Tooltip';
+import Button from '@mui/material/Button';
+import Myspots from "./Myspots";
 
 
 const baseURL = "http://localhost:8080/api/spots";
 
+      const useStyles = makeStyles(theme => ({
+        customHoverFocus: {
+          "&:hover, &.Mui-focusVisible": { backgroundColor: "black" },
+          
+
+        }
+      }));
 
 //ONGELMAKSI JÄÄ ETTÄ TÄYTYY SAADA OIKEA USERI KANNASTA
 
@@ -17,22 +28,22 @@ export default function Carspots() {
     const [myPark, setMyPark]= React.useState(0);
 
     const[clicked1, setClick]=React.useState(false);
+    const classes = useStyles();
 
+      useEffect(() => {
+        axios.get(baseURL).then((response) => {
+          setSpot(response.data);
+        })
 
-        useEffect(() => {
-          axios.get(baseURL).then((response) => {
-            setSpot(response.data);
-          })
+        }, [parkid, clicked1, myPark]);
 
-          }, [parkid, clicked1, myPark]);
-
-          useEffect(() => {
-            //tähän vielä täytyy hakee current user!!! //https://dzone.com/articles/how-to-get-current-logged-in-username-in-spring-se
-            axios.get(baseURL+"/myspots/user").then((response) => {
-              setmySpots(response.data);
-            })
-          
-            }, [clicked1, myPark]);
+              useEffect(() => {
+                //tähän vielä täytyy hakee current user!!! //https://dzone.com/articles/how-to-get-current-logged-in-username-in-spring-se
+                axios.get(baseURL+"/myspots/user").then((response) => {
+                  setmySpots(response.data);
+                })
+              
+                }, [clicked1, myPark]);
 
 
 
@@ -50,22 +61,28 @@ const steps = [];
             color="green"
             }
               steps.push(
-              <button
-                style={{ backgroundColor: color, width: 300 }}
-                onClick={()=>setPark(i-1)}
-              >parkingspot {i}
-              </button>);
+                  <Tooltip title={i}>
+                    <CarRepairOutlinedIcon fontSize="large" className={classes.customHoverFocus}
+                        style={{ color: color, margin: 10}}
+                        onClick={()=>setPark(i-1)}
+                        >parkingspot {i}
+                    </CarRepairOutlinedIcon>
+                  </Tooltip>
+              );
             }
       }else{
         for (let i = 1; i <= spotit.length; i++) {
 
           
             steps.push(
-            <button
-              style={{ backgroundColor: "yellow", width: 300 }}
-              onClick={()=>setMyPark(spotit[i-1].id)}
-            >My parkingspot {spotit[i-1].id}
-            </button>);
+                <Tooltip title={i}>
+                  <CarRepairOutlinedIcon fontSize="large" className={classes.customHoverFocus} 
+                      style={{ color: "yellow" , margin: 10 }}
+                      onClick={()=>setMyPark(spotit[i-1].id)}
+                      >My parkingspot {spotit[i-1].id}
+                  </CarRepairOutlinedIcon>
+                </Tooltip>
+            );
           }
 
         }
@@ -130,21 +147,36 @@ function reserveThisSpot(i, dele){
   return (
     
     <>
-    {/* <button onClick={onpress}>Get avaible spots</button> */}
-    {board(spots,false)}
-       <button onClick={()=>reserveThisSpot(parkid,false)}>Reserve spot number: {parkid+1}</button>
-        <button onClick={()=>{
-                if(clicked1===false){
-                  setClick(true)
-                  // fetchUserSpots();
-                  //kutsu fetchia mikä hakee curruserin kamat
-                }else{
-                  setClick(false)
-                }
-              }}>show my parkingspots
-        </button>
-        <button onClick={()=>reserveThisSpot(myPark,true)}>Delete my spot number: {myPark}</button>
-    {clicked1 && board(mySpots,true)}
+
+      {/*Button to reserve currently selected parkinspot */}
+      <Button onClick={()=>reserveThisSpot(parkid,false)}>Click to reserve spot: {parkid+1}</Button>
+
+{/* Element that shows reserved and tobe reserved parking spots */}
+{board(spots,false)}
+
+
+
+
+{/* Button to show personal reservations */}
+<Button onClick={()=>{
+    if(clicked1===false){
+      setClick(true)
+      // fetchUserSpots();
+      //kutsu fetchia mikä hakee curruserin kamat
+    }else{
+      setClick(false)
+    }
+  }}>show my parkingspots
+</Button>
+
+
+
+
+ {/*Function that displays personal reservations  */}
+{clicked1 && board(mySpots,true)}
+
+{/* Button for ending own reservations */}
+{clicked1 && <Button onClick={()=>reserveThisSpot(myPark,true)}>Delete my spot number: {myPark}</Button>}
 
     </>
 
