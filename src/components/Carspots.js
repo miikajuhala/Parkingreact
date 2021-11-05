@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect } from "react";
 
 
+
 const baseURL = "http://localhost:8080/api/spots";
 
 
@@ -23,7 +24,7 @@ export default function Carspots() {
             setSpot(response.data);
           })
 
-          }, [parkid]);
+          }, [parkid, clicked1, myPark]);
 
           useEffect(() => {
             //tähän vielä täytyy hakee current user!!! //https://dzone.com/articles/how-to-get-current-logged-in-username-in-spring-se
@@ -31,7 +32,7 @@ export default function Carspots() {
               setmySpots(response.data);
             })
           
-            }, [clicked1]);
+            }, [clicked1, myPark]);
 
 
 
@@ -86,7 +87,7 @@ function reserveThisSpot(i, dele){
                               id:spots[i].id,
                               reserved: true,
                               premium: spots[i].premium,
-                              spotusername: "user",
+                              spotuser: "user",
                           })
                             .then(function (response) {
                               setPark(0)
@@ -106,10 +107,12 @@ function reserveThisSpot(i, dele){
                     // id:i,
                     reserved: false,
                     // premium: spots[i].premium,
-                    spotusername: null,
+                    spotuser: null,
                 })
                   .then(function (response) {
+                    
                     setMyPark(0)
+                    
                     console.log(response);
                 })
                   .catch(function (error) {
