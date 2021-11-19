@@ -5,8 +5,12 @@ import CarRepairOutlinedIcon from '@mui/icons-material/CarRepairOutlined';
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
-import Myspots from "./Myspots";
 
+
+//NEXIIN FETCHI USERNAMESTA JA LAITETAAN SE MUIHIN GETTEIHI JA POSTEIHI
+//ja javaa security määrittelyt
+//sen jälkeen maven installi ja herokuu
+//ehkä laittaa db;n toimimaan
 
 const baseURL = "http://localhost:8080/api/spots";
 
@@ -41,6 +45,7 @@ export default function Carspots() {
                 //tähän vielä täytyy hakee current user!!! //https://dzone.com/articles/how-to-get-current-logged-in-username-in-spring-se
                 axios.get(baseURL+"/myspots/user").then((response) => {
                   setmySpots(response.data);
+                
                 })
               
                 }, [clicked1, myPark]);
@@ -105,6 +110,10 @@ function reserveThisSpot(i, dele){
                               reserved: true,
                               premium: spots[i].premium,
                               spotuser: "user",
+                          }, {
+                            headers: {
+                              'Authorization': sessionStorage.getItem("jwt")
+                            },
                           })
                             .then(function (response) {
                               setPark(0)
@@ -125,6 +134,10 @@ function reserveThisSpot(i, dele){
                     reserved: false,
                     // premium: spots[i].premium,
                     spotuser: null,
+                },{
+                  headers: {
+                    'Authorization': sessionStorage.getItem("jwt")
+                  },
                 })
                   .then(function (response) {
                     

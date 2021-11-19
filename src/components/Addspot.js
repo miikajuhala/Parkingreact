@@ -11,13 +11,19 @@ import { Button } from '@mui/material';
 export default function Addspot() {
     
     const baseURL = "http://localhost:8080/api/spots";
-    const [spot, setSpot] = useState({reserved: true, premium:false, spotusername:""})
+    const [spot, setSpot] = useState({reserved: true, premium: false, spotusername:""})
 
     function addspots(){
-    axios.post(baseURL+"/add", {
+
+      console.log(sessionStorage.getItem("jwt"))
+      axios.post(baseURL+"/add",{
         reserved: spot.reserved,
         premium: spot.premium,
-        spotusername: null,
+        spotusername: null
+    }, {
+        headers: {
+          'Authorization': sessionStorage.getItem("jwt")
+        },
       })
       .then(function (response) {
         console.log(response);
