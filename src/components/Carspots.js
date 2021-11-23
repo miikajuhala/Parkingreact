@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
-import { IconButton, Snackbar } from "@mui/material";
+import { IconButton, Snackbar, Typography } from "@mui/material";
 import Redirect from "react-router-dom";
 
 
@@ -210,26 +210,28 @@ function reserveThisSpot(i, dele){
     <>
 
       {/*Button to reserve currently selected parkinspot */}
-      <Button onClick={()=>reserveThisSpot(parkid,false)}>Click to reserve spot: {parkid}</Button>
+      {loaded && sessionStorage.getItem("jwt")!==null &&<Button onClick={()=>reserveThisSpot(parkid,false)}>Click to reserve spot: {parkid}</Button>}
 
 {/* Element that shows reserved and tobe reserved parking spots */}
-{loaded && board(spots,false)}
+{loaded && sessionStorage.getItem("jwt")!==null && board(spots,false)}
 
 
 
 
 {/* Button to show personal reservations */}
-<Button onClick={()=>{
+{loaded && sessionStorage.getItem("jwt")!==null &&<Button onClick={()=>{
     if(clicked1===false){
       setClick(true)
     }else{
       setClick(false)
     }
   }}>show my parkingspots
-</Button>
+</Button>}
 
 
-
+ {sessionStorage.getItem("jwt")===null && <Typography variant="h2" gutterBottom component="div">
+Please login to reserve parkingspots!
+</Typography>}
 
  {/*Function that displays personal reservations  */}
 {clicked1 && board(mySpots,true)}

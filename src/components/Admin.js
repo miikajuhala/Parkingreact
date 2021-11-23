@@ -272,7 +272,7 @@ return(
         
         </Box>}
 
-        <p>Register</p>
+        
         
         {sessionStorage.getItem("jwt")===null && <Grid container
   spacing={0}
@@ -280,6 +280,7 @@ return(
   alignItems="center"
   justifyContent="top"
   style={{ minHeight: '100vh' }}>
+  <p>Register</p>
         
         <TextField id="outlined-basic" name ="username" label="username" variant="outlined" onChange={handleChange1}/>
         <TextField id="filled-basic" name ="password"  label="password" variant="filled" onChange={handleChange1} />

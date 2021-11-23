@@ -27,9 +27,13 @@ return (
 <BrowserRouter>
 <div className="topnav">
 <Link to="/">Home</Link>
-{sessionStorage.getItem("jwt")===null &&<Link to="/loginpage">Login</Link>}
-{/* {/* {sessionStorage.getItem("role")==="admin" &&  */}
-{sessionStorage.getItem("username")==="miika" && <Link to="/addspot">Admin UI</Link>}
+
+{sessionStorage.getItem("jwt")===null &&
+<Link to="/loginpage">Login</Link>}
+
+{sessionStorage.getItem("username")==="miika" && 
+<Link to="/addspot">Admin UI</Link>}
+
 <Link to="/carspage">Parking reservation</Link>
 {sessionStorage.getItem("jwt")!==null && <button onClick={Logout}>Logout </button>}
 </div>
