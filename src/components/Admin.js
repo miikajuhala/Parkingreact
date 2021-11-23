@@ -177,7 +177,10 @@ const getToken = () => {
       axios.post(url+"/api/register",{
        username: user.username,
        passwordHash: user.password,
-    }, {})
+       role: "USER"
+    }
+    
+      )
       .then(function (response) {
         console.log(response);
       })
