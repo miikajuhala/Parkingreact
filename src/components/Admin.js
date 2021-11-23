@@ -7,14 +7,13 @@ import axios from 'axios';
 import Fab from '@mui/material/Fab';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
-import { Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Zoom from '@mui/material/Zoom';
 import SwipeableViews from 'react-swipeable-views';
 import Collapse from '@material-ui/core/Collapse';
-
 import jwt from 'jwt-decode'
 import PropTypes from 'prop-types';
 import { green } from '@mui/material/colors';
@@ -22,6 +21,7 @@ import TextField from '@mui/material/TextField';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import loginImg from './login.jpg'
+import { grid } from '@mui/system';
 
 
             function TabPanel(props) {
@@ -47,12 +47,12 @@ import loginImg from './login.jpg'
     value: PropTypes.number.isRequired,
   };
   
-            function a11yProps(index) {
-                return {
-                id: `action-tab-${index}`,
-                'aria-controls': `action-tabpanel-${index}`,
-                };
-            }
+    function a11yProps(index) {
+        return {
+        id: `action-tab-${index}`,
+        'aria-controls': `action-tabpanel-${index}`,
+        };
+    }
   
   const fabStyle = {
     position: 'absolute',
@@ -60,22 +60,15 @@ import loginImg from './login.jpg'
     right: 16,
   };
   
-            const fabGreenStyle = {
-                color: 'common.white',
-                bgcolor: green[500],
-                '&:hover': {
-                bgcolor: green[600],
-                },
-            };
+  
 
 export default function Admin(props) {
 
     const [open, setOpen] = React.useState(false)
     const [msg, setMsg] = React.useState('')
-    const [userJwt, setUserJwt] = React.useState(null);
-    const [clicked, setClicked] = React.useState(false);
+   
 
-    const url = "http://localhost:8080"
+    const url = "https://parkkiappi.herokuapp.com"
 
     const [user, setUser] = React.useState({username: "", password:""});
     const [loggedin, setLoggedin] = React.useState(false);
@@ -133,13 +126,22 @@ export default function Admin(props) {
 
 // TÄSSÄ LOPPUU TYYLIMÄÄRITTELYT
 
+//haetaan rooli servulta, voisi korvata jwt:n infolla jos sais servun muodos
+//tamaan jwt:n myös roolitietojen kanssa, nyt palauttaa vain usernamen
+// function fetchrole(){
+//   axios.get(url+"/role").then((response) => {
+//     console.log(response+"ROLE RESPONSE")
+//     sessionStorage.setItem("role",response )
+//   });
+// }
+
 
 
 //HAETAAN TOKENI SERVULTA
 const getToken = () => {
 
-    axios.post("http://localhost:8080/login", {
-        username:"admin", password:"admin"
+    axios.post(url+"/login", {
+        username:user.username, password:user.password
       })
         .then((response) => {
           console.log(response);
@@ -148,13 +150,16 @@ const getToken = () => {
 
             if (jwtToken !== null) {
                 sessionStorage.setItem("jwt", jwtToken)
-                sessionStorage.setItem("role", jwt(jwtToken).sub)
+                sessionStorage.setItem("username", jwt(jwtToken).sub)
+                // fetchrole() 
+                //username nii saa laitettuu varauksen oikein
             console.log(jwt(jwtToken).sub)
-                    setClicked(false);
+            console.log(jwt(jwtToken).username)
                     setLoggedin(true);
                     setMsg("Logged in succesfully!"+sessionStorage.getItem("jwt"))
                     setOpen(true)
-                    
+            
+                   window.location.reload();
                     
             }
             }, (error) => {
@@ -165,6 +170,23 @@ const getToken = () => {
  
     
     }
+
+    //rekisteröidään uus käyttäjä
+    function createNewUser(){
+
+      axios.post(url+"/api/register",{
+       username: user.username,
+       passwordHash: user.password,
+    }, {})
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    
+    }
+    
     
 
    const handleChange1 = (event)=>{
@@ -232,25 +254,42 @@ return(
                 </SwipeableViews>
             {fabs.map((fab, index) => (
                         <Zoom
-                        key={fab.color}
-                        in={value === index}
-                        timeout={transitionDuration}
-                        style={{
-                            transitionDelay: `${value === index ? transitionDuration.exit : 0}ms`,
-                        }}
-                        unmountOnExit
-                        >
+                            key={fab.color}
+                            in={value === index}
+                            timeout={transitionDuration}
+                            style={{
+                                transitionDelay: `${value === index ? transitionDuration.exit : 0}ms`,
+                            }}
+                            unmountOnExit
+                            >
                         <Fab sx={fab.sx} aria-label={fab.label} color={fab.color}>
                             {fab.icon}
                         </Fab>
                         </Zoom>
             ))}
+        
+
+        
         </Box>}
 
+        <p>Register</p>
+        
+        {sessionStorage.getItem("jwt")===null && <Grid container
+  spacing={0}
+  direction="column"
+  alignItems="center"
+  justifyContent="top"
+  style={{ minHeight: '100vh' }}>
+        
+        <TextField id="outlined-basic" name ="username" label="username" variant="outlined" onChange={handleChange1}/>
+        <TextField id="filled-basic" name ="password"  label="password" variant="filled" onChange={handleChange1} />
+        <Button onClick={createNewUser}>Register</Button>
+        </Grid>
+        }
     
  
-                    {/* Tässä resultit, jos role admin niin pääsee sisään */}
-                      <button> results</button> 
+    
+                      
 
 </Grid> 
 

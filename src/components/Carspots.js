@@ -5,6 +5,9 @@ import CarRepairOutlinedIcon from '@mui/icons-material/CarRepairOutlined';
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
+import { IconButton, Snackbar } from "@mui/material";
+import Redirect from "react-router-dom";
 
 
 //NEXIIN FETCHI USERNAMESTA JA LAITETAAN SE MUIHIN GETTEIHI JA POSTEIHI
@@ -12,7 +15,7 @@ import Button from '@mui/material/Button';
 //sen jälkeen maven installi ja herokuu
 //ehkä laittaa db;n toimimaan
 
-const baseURL = "http://localhost:8080/api/spots";
+const baseURL = "https://parkkiappi.herokuapp.com/api/spots";
 
       const useStyles = makeStyles(theme => ({
         customHoverFocus: {
@@ -25,6 +28,10 @@ const baseURL = "http://localhost:8080/api/spots";
 //ONGELMAKSI JÄÄ ETTÄ TÄYTYY SAADA OIKEA USERI KANNASTA
 
 export default function Carspots() {
+
+
+
+
     const [spots, setSpot] = React.useState([]);
     const [mySpots, setmySpots]= React.useState([]);
 
@@ -32,18 +39,44 @@ export default function Carspots() {
     const [myPark, setMyPark]= React.useState(0);
 
     const[clicked1, setClick]=React.useState(false);
+
+    //snackbar constit
+    const [open, setOpen] = React.useState(false)
+    const [msg, setMsg] = React.useState('')
+    const [loaded, setLoaded] = React.useState(false)
+
+//Snackbar maarittelyä
+const action = (
+  <React.Fragment>
+    <IconButton
+      size="small"
+      aria-label="close"
+      color="primary"
+      onClick={()=>setOpen(false)}
+    >
+      <CloseIcon fontSize="small" />
+    </IconButton>
+  </React.Fragment>
+)
+
     const classes = useStyles();
 
       useEffect(() => {
         axios.get(baseURL).then((response) => {
           setSpot(response.data);
+          console.log(response.data);
+          setLoaded(true)
         })
 
         }, [parkid, clicked1, myPark]);
 
               useEffect(() => {
-                //tähän vielä täytyy hakee current user!!! //https://dzone.com/articles/how-to-get-current-logged-in-username-in-spring-se
-                axios.get(baseURL+"/myspots/user").then((response) => {
+                axios.get(baseURL+"/myspots/"+sessionStorage.getItem("username"), {
+                  headers: {
+                    'Authorization': sessionStorage.getItem("jwt")
+                  },
+                })
+                .then((response) => {
                   setmySpots(response.data);
                 
                 })
@@ -53,23 +86,26 @@ export default function Carspots() {
 
 
 function board(spotit,personal){
+  console.log(spotit.length+"SPOTIT")
 let color="";
 const steps = [];
 
       if(personal===false){
 
             for (let i = 1; i <= spotit.length; i++) {
-
+                console.log(i);
             if(spotit[i-1].reserved===true){
+              console.log("läpi")
               color="red"
             }else{
+              console.log("läpi")
             color="green"
             }
               steps.push(
-                  <Tooltip title={i}>
+                  <Tooltip title={spotit[i-1].id}>
                     <CarRepairOutlinedIcon fontSize="large" className={classes.customHoverFocus}
                         style={{ color: color, margin: 10}}
-                        onClick={()=>setPark(i-1)}
+                        onClick={()=>setPark(spotit[i-1].id)}
                         >parkingspot {i}
                     </CarRepairOutlinedIcon>
                   </Tooltip>
@@ -80,7 +116,7 @@ const steps = [];
 
           
             steps.push(
-                <Tooltip title={i}>
+                <Tooltip title={mySpots[i-1].id}>
                   <CarRepairOutlinedIcon fontSize="large" className={classes.customHoverFocus} 
                       style={{ color: "yellow" , margin: 10 }}
                       onClick={()=>setMyPark(spotit[i-1].id)}
@@ -92,7 +128,7 @@ const steps = [];
 
         }
   return(
-  
+  // tässä yhden div:in minkä sisällä lista autopaikoista
   <div className="progressBar">{ steps }</div>
 
 );
@@ -103,13 +139,22 @@ const steps = [];
 
 function reserveThisSpot(i, dele){
   if(dele===false){
+
+    //katsotaan missä tällä id:llä sijaitsee haluttu spotti
+    let rspotid=0;
+      for(let ig=0; ig<spots.length; ig++){
+          if(spots[ig].id===i){
+            rspotid = ig;
+          }
+      }
+
                   //JOS VARATAAN PAIKKA
-                  if(spots[i].reserved===false){
-                          axios.put(baseURL+"/newres/"+spots[i].id, {
-                              id:spots[i].id,
+                  if(spots[rspotid].reserved===false){
+                          axios.put(baseURL+"/newres/"+i, {
+                              id:i,
                               reserved: true,
-                              premium: spots[i].premium,
-                              spotuser: "user",
+                              premium: spots[rspotid].premium,
+                              spotuser: sessionStorage.getItem("username"),
                           }, {
                             headers: {
                               'Authorization': sessionStorage.getItem("jwt")
@@ -122,9 +167,11 @@ function reserveThisSpot(i, dele){
                             .catch(function (error) {
                               console.log(error);
                           });
-                          alert("You have succesfully reserved spot: "+spots[parkid].id)
+                          setMsg("You have succesfully reserved spot: "+i)
+                          setOpen(true)
                   }else{
-                    alert("this spot is already taken :(")
+                          setMsg("This spot is already taken :(")
+                          setOpen(true)
                 }
                 //jos poistetaan/lopetetaan varaus NIIN ALEMPI
       }else{
@@ -148,8 +195,9 @@ function reserveThisSpot(i, dele){
                   .catch(function (error) {
                     console.log(error);
                 });
-                alert("You have succesfully deleted reservation for spot: "+i)
-
+      
+                setMsg("You have succesfully deleted reservation for spot: "+i)
+                setOpen(true)
 
                 }     
 }
@@ -162,10 +210,10 @@ function reserveThisSpot(i, dele){
     <>
 
       {/*Button to reserve currently selected parkinspot */}
-      <Button onClick={()=>reserveThisSpot(parkid,false)}>Click to reserve spot: {parkid+1}</Button>
+      <Button onClick={()=>reserveThisSpot(parkid,false)}>Click to reserve spot: {parkid}</Button>
 
 {/* Element that shows reserved and tobe reserved parking spots */}
-{board(spots,false)}
+{loaded && board(spots,false)}
 
 
 
@@ -174,8 +222,6 @@ function reserveThisSpot(i, dele){
 <Button onClick={()=>{
     if(clicked1===false){
       setClick(true)
-      // fetchUserSpots();
-      //kutsu fetchia mikä hakee curruserin kamat
     }else{
       setClick(false)
     }
@@ -188,8 +234,22 @@ function reserveThisSpot(i, dele){
  {/*Function that displays personal reservations  */}
 {clicked1 && board(mySpots,true)}
 
-{/* Button for ending own reservations */}
+{/* Button for ending own reservation */}
 {clicked1 && <Button onClick={()=>reserveThisSpot(myPark,true)}>Delete my spot number: {myPark}</Button>}
+
+
+
+<Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={()=>setOpen(false)}
+        message={msg}
+        action={action}
+        alignItems="center"
+        justifyContent="center"
+        color="secondary"
+      />
+
 
     </>
 
