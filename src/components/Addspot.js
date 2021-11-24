@@ -20,12 +20,12 @@ import InputLabel from '@mui/material/InputLabel';
 
 export default function Addspot() {
     
-    const baseURL = "https://parkkiappi.herokuapp.com/api";
-    //spot consts
-    const [spot, setSpot] = useState({reserved: true, premium: false, spotusername:""})
-    const [spotid, setSpotid] = useState(null);
-    //user const
-    const [user, setUser] = useState({username: "", password: "", role:""})
+const baseURL = "https://parkkiappi.herokuapp.com/api";
+//spot consts
+const [spot, setSpot] = useState({reserved: true, premium: false, spotusername:""})
+const [spotid, setSpotid] = useState(null);
+//user const
+const [user, setUser] = useState({username: "", password: "", role:""})
 
     // SPOTTIEN LISÄYS EDIT JA POISTO
     function addspots(){
