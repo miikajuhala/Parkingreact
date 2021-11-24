@@ -207,7 +207,7 @@ return(
         sx={{
             
             bgcolor: 'background.paper',
-            width: 500,
+            maxwidth: 500,
             position: 'relative',
             minHeight: 200,
         }}

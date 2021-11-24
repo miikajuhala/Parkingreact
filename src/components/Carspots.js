@@ -228,7 +228,7 @@ function reserveThisSpot(i, dele){
 
 
 {/* Element that shows reserved and tobe reserved parking spots */}
-<Paper  
+{loaded && sessionStorage.getItem("jwt")!==null &&<Paper  
 style={{
 padding: 40,
 margin: 10,
@@ -240,7 +240,7 @@ border: "1px solid black"
 {/*Button to reserve currently selected parkinspot */}
 {loaded && sessionStorage.getItem("jwt")!==null &&<Button onClick={()=>reserveThisSpot(parkid,false)}>Click to reserve spot: {parkid}</Button>}
 
-</Paper>
+</Paper>}
 
 
 
@@ -251,24 +251,24 @@ border: "1px solid black"
 
 
  {/* PERSONAL RENTALS */}
- <Paper
+ {loaded && sessionStorage.getItem("jwt")!==null &&<Paper
   style={{
     padding: 40,
     margin: 10,
     border: "1px solid black"
   }}>
-  {loaded && sessionStorage.getItem("jwt")!==null &&<Button onClick={()=>{
+  <Button onClick={()=>{
     if(clicked1===false){
       setClick(true)
     }else{
       setClick(false)
-    }}}>show my parkingspots</Button>}
+    }}}>show my parkingspots</Button>
 
 {/*Function that displays personal reservations  */}
       {clicked1 && board(mySpots,true)}
 {/* Button for ending own reservation */}
       {clicked1 && <Button onClick={()=>reserveThisSpot(myPark,true)}>Stop renting spot number: {myPark}</Button>}
-</Paper>
+</Paper>}
 
 
 
@@ -277,7 +277,7 @@ border: "1px solid black"
 
 {/* IF PERSON NOT LOGGED IN */}
 {sessionStorage.getItem("jwt")===null && <Paper style={{
-    width: 500,
+    maxwidth: 500,
     height:500,
     padding: 40,
     margin: 10,

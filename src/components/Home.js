@@ -14,16 +14,14 @@ export default function Home() {
   justifyContent="top"
   
   style={{ minHeight: '100vh',
-    padding: 40,
-    margin: 10,
-    border: "1px solid black" }}
+   }}
 > 
 
 
 
 
 <Paper style={{
-    width: 500,
+    maxwidth: 500,
     height:500,
     padding: 40,
     margin: 10,
