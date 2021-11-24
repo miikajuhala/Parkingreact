@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
-import { IconButton, Snackbar, Typography } from "@mui/material";
+import { Grid, IconButton, Paper, Snackbar, Typography } from "@mui/material";
 import Redirect from "react-router-dom";
 
 
@@ -118,7 +118,7 @@ const steps = [];
             steps.push(
                 <Tooltip title={mySpots[i-1].id}>
                   <CarRepairOutlinedIcon fontSize="large" className={classes.customHoverFocus} 
-                      style={{ color: "yellow" , margin: 10 }}
+                      style={{ color: "orange" , margin: 10 }}
                       onClick={()=>setMyPark(spotit[i-1].id)}
                       >My parkingspot {spotit[i-1].id}
                   </CarRepairOutlinedIcon>
@@ -209,35 +209,96 @@ function reserveThisSpot(i, dele){
     
     <>
 
-      {/*Button to reserve currently selected parkinspot */}
-      {loaded && sessionStorage.getItem("jwt")!==null &&<Button onClick={()=>reserveThisSpot(parkid,false)}>Click to reserve spot: {parkid}</Button>}
+
+<Grid
+  container
+  spacing={0}
+  direction="column"
+  alignItems="center"
+  justifyContent="top"
+  
+  style={{ minHeight: '100vh',
+    padding: 40,
+    margin: 10,
+    border: "1px solid black" }}
+> 
+
+
+      
+
 
 {/* Element that shows reserved and tobe reserved parking spots */}
+<Paper  
+style={{
+padding: 40,
+margin: 10,
+border: "1px solid black"
+}}>
+{/* Displays every existing parking spot  */}
 {loaded && sessionStorage.getItem("jwt")!==null && board(spots,false)}
 
+{/*Button to reserve currently selected parkinspot */}
+{loaded && sessionStorage.getItem("jwt")!==null &&<Button onClick={()=>reserveThisSpot(parkid,false)}>Click to reserve spot: {parkid}</Button>}
+
+</Paper>
 
 
 
-{/* Button to show personal reservations */}
-{loaded && sessionStorage.getItem("jwt")!==null &&<Button onClick={()=>{
+
+
+
+
+
+
+ {/* PERSONAL RENTALS */}
+ <Paper
+  style={{
+    padding: 40,
+    margin: 10,
+    border: "1px solid black"
+  }}>
+  {loaded && sessionStorage.getItem("jwt")!==null &&<Button onClick={()=>{
     if(clicked1===false){
       setClick(true)
     }else{
       setClick(false)
-    }
-  }}>show my parkingspots
-</Button>}
+    }}}>show my parkingspots</Button>}
 
-
- {sessionStorage.getItem("jwt")===null && <Typography variant="h2" gutterBottom component="div">
-Please login to reserve parkingspots!
-</Typography>}
-
- {/*Function that displays personal reservations  */}
-{clicked1 && board(mySpots,true)}
-
+{/*Function that displays personal reservations  */}
+      {clicked1 && board(mySpots,true)}
 {/* Button for ending own reservation */}
-{clicked1 && <Button onClick={()=>reserveThisSpot(myPark,true)}>Delete my spot number: {myPark}</Button>}
+      {clicked1 && <Button onClick={()=>reserveThisSpot(myPark,true)}>Stop renting spot number: {myPark}</Button>}
+</Paper>
+
+
+
+
+
+
+{/* IF PERSON NOT LOGGED IN */}
+{sessionStorage.getItem("jwt")===null && <Paper style={{
+    width: 500,
+    height:500,
+    padding: 40,
+    margin: 10,
+    border: "1px solid black"
+  }}>
+
+<Typography variant="h4" display="block" gutterBottom>
+        Parking spot rental  
+      </Typography>
+
+<Typography variant="overline" display="block" gutterBottom>
+        Tuomarila asoy
+      </Typography>
+
+
+<Typography variant="p3" display="block" gutterBottom>
+    Login/Register with your asoy credentials to rent parkingspots <br></br>
+    
+   -testing testing-
+</Typography>
+</Paper>}
 
 
 
@@ -252,29 +313,10 @@ Please login to reserve parkingspots!
         color="secondary"
       />
 
-
+</Grid> 
     </>
+
 
     );
   }
-    // <div>
-    // {/* <button onClick={onpress}>get spots !</button> */}
-    // <table>
-    
-    //   <tbody>
-    //     <tr><th>reserved</th><th>Premim spot</th><th  >Reservant</th></tr>
-    //     <tr> {spots.length}</tr>
-    //     {
-    //       spots.map((spot) => 
-    //         <tr key={spot.id}>
-    //           <td>{spot.reserved.toString()}</td>
-    //           <td>{spot.premium.toString()}</td>
-    //           <td>{spot.spotusername}</td>
-    //         </tr>
-    //      )
-        
-    //       }
-    //   </tbody>
-    // </table>
-    // </div>
- 
+   

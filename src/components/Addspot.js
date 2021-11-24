@@ -220,7 +220,7 @@ function createNewUser(){
       <TextField id="outlined-basic" name ="username" label="username" variant="outlined" onChange={handleChange2}/>
       <TextField id="filled-basic" name ="password"  label="password" variant="filled" onChange={handleChange2} />
       <TextField id="outlined-basic" name ="role" label="role" variant="outlined" onChange={handleChange2}/>
-      
+      {/* create new user as a admin */}
       <Button onClick={createNewUser}>create New User(ADMIN)</Button>
     </Box>
 

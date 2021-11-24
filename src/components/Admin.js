@@ -124,17 +124,6 @@ export default function Admin(props) {
 
 
 
-// TÄSSÄ LOPPUU TYYLIMÄÄRITTELYT
-
-//haetaan rooli servulta, voisi korvata jwt:n infolla jos sais servun muodos
-//tamaan jwt:n myös roolitietojen kanssa, nyt palauttaa vain usernamen
-// function fetchrole(){
-//   axios.get(url+"/role").then((response) => {
-//     console.log(response+"ROLE RESPONSE")
-//     sessionStorage.setItem("role",response )
-//   });
-// }
-
 
 
 //HAETAAN TOKENI SERVULTA
@@ -151,17 +140,15 @@ const getToken = () => {
             if (jwtToken !== null) {
                 sessionStorage.setItem("jwt", jwtToken)
                 sessionStorage.setItem("username", jwt(jwtToken).sub)
-                // fetchrole() 
-                //username nii saa laitettuu varauksen oikein
-            console.log(jwt(jwtToken).sub)
-            console.log(jwt(jwtToken).username)
+                setUser({...user, username: "",password:""})
                     setLoggedin(true);
-                    setMsg("Logged in succesfully!"+sessionStorage.getItem("jwt"))
+                    props.setLogged(true);
                     setOpen(true)
-            
-                   window.location.reload();
-                    
-            }
+                    setMsg("Logged in succesfully!")
+
+                    // window.location.replace("http://localhost:3000/carspage");
+                   
+                  }
             }, (error) => {
                 console.log(error)
                 setMsg(error+"error")
@@ -178,11 +165,12 @@ const getToken = () => {
        username: user.username,
        passwordHash: user.password,
        role: "USER"
-    }
-    
-      )
+    })
       .then(function (response) {
-        console.log(response);
+        //kirjaa suoraan sisään kun rekisteröityy
+        getToken();
+        
+
       })
       .catch(function (error) {
         console.log(error);
@@ -285,8 +273,8 @@ return(
   style={{ minHeight: '100vh' }}>
   <p>Register</p>
         
-        <TextField id="outlined-basic" name ="username" label="username" variant="outlined" onChange={handleChange1}/>
-        <TextField id="filled-basic" name ="password"  label="password" variant="filled" onChange={handleChange1} />
+        <TextField id="outlined-basic" name="username" value={user.username} label="username" variant="outlined" onChange={handleChange1}/>
+        <TextField id="filled-basic" type="password" name="password" value={user.password} label="password" variant="filled" onChange={handleChange1} />
         <Button onClick={createNewUser}>Register</Button>
         </Grid>
         }
