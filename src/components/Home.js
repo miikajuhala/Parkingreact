@@ -5,17 +5,15 @@ import React from "react";
 export default function Home() {
 
   return (
-    <div>
-     <Grid
+<div>
+<Grid
   container
   spacing={0}
   direction="column"
   alignItems="center"
   justifyContent="top"
-  
   style={{ minHeight: '100vh',
-   }}
-> 
+}}> 
 
 
 
@@ -30,11 +28,11 @@ export default function Home() {
 
 <Typography variant="h4" display="block" gutterBottom>
         Parking spot rental  
-      </Typography>
+</Typography>
 
 <Typography variant="overline" display="block" gutterBottom>
         Tuomarila asoy
-      </Typography>
+</Typography>
 
 
 <Typography variant="p3" display="block" gutterBottom>
@@ -50,6 +48,6 @@ export default function Home() {
 
  </Grid> 
 
-    </div>
+</div>
   );
 }

@@ -24,22 +24,23 @@ import loginImg from './login.jpg'
 import { grid } from '@mui/system';
 
 
-            function TabPanel(props) {
-                const { children, value, index, ...other } = props;
-            
-                return (
-                <Typography
-                    component="div"
-                    role="tabpanel"
-                    hidden={value !== index}
-                    id={`action-tabpanel-${index}`}
-                    aria-labelledby={`action-tab-${index}`}
-                    {...other}
-                >
-                    {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-                </Typography>
-                );
-            }
+//TAB panel function before components main function
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+    <Typography
+        component="div"
+        role="tabpanel"
+        hidden={value !== index}
+        id={`action-tabpanel-${index}`}
+        aria-labelledby={`action-tab-${index}`}
+        {...other}
+    >
+        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </Typography>
+    );
+}
   
   TabPanel.propTypes = {
     children: PropTypes.node,
@@ -47,12 +48,12 @@ import { grid } from '@mui/system';
     value: PropTypes.number.isRequired,
   };
   
-    function a11yProps(index) {
-        return {
-        id: `action-tab-${index}`,
-        'aria-controls': `action-tabpanel-${index}`,
-        };
-    }
+  function a11yProps(index) {
+      return {
+      id: `action-tab-${index}`,
+      'aria-controls': `action-tabpanel-${index}`,
+      };
+  }
   
   const fabStyle = {
     position: 'absolute',
@@ -72,9 +73,22 @@ export default function Admin(props) {
 
     const [user, setUser] = React.useState({username: "", password:""});
     const [loggedin, setLoggedin] = React.useState(false);
-
     
-//Snackbar maarittelyä
+    const theme = useTheme();
+    const [value, setValue] = React.useState(0);
+  
+    const handleChange = (event, newValue) => {
+      setValue(newValue);
+    };
+  
+    const handleChangeIndex = (index) => {
+      setValue(index);
+    };
+    const handleChange1 = (event)=>{
+      setUser({...user, [event.target.name]: event.target.value});
+    };
+    
+    //Snackbar maarittelyä
     const action = (
         <React.Fragment>
           <IconButton
@@ -88,18 +102,6 @@ export default function Admin(props) {
         </React.Fragment>
     )
 
-
-    const theme = useTheme();
-    const [value, setValue] = React.useState(0);
-  
-    const handleChange = (event, newValue) => {
-      setValue(newValue);
-    };
-  
-    const handleChangeIndex = (index) => {
-      setValue(index);
-    };
-  
     const transitionDuration = {
       enter: theme.transitions.duration.enteringScreen,
       exit: theme.transitions.duration.leavingScreen,
@@ -120,35 +122,24 @@ export default function Admin(props) {
       },
     ]
 
-
-
-
-
-
-
-//HAETAAN TOKENI SERVULTA
-const getToken = () => {
-
-    axios.post(url+"/login", {
+    //HAETAAN TOKENI SERVULTA
+    const getToken = () => {
+      axios.post(url+"/login", {
         username:user.username, password:user.password
       })
         .then((response) => {
           console.log(response);
+          const jwtToken = response.headers.authorization
       
-            const jwtToken = response.headers.authorization
-
             if (jwtToken !== null) {
                 sessionStorage.setItem("jwt", jwtToken)
                 sessionStorage.setItem("username", jwt(jwtToken).sub)
                 setUser({...user, username: "",password:""})
-                    setLoggedin(true);
-                    props.setLogged(true);
-                    setOpen(true)
-                    setMsg("Logged in succesfully!")
-
-                    // window.location.replace("http://localhost:3000/carspage");
-                   
-                  }
+                  setLoggedin(true);
+                  props.setLogged(true);
+                  setOpen(true)
+                  setMsg("Logged in succesfully!")
+            }
             }, (error) => {
                 console.log(error)
                 setMsg(error+"error")
@@ -158,131 +149,120 @@ const getToken = () => {
     
     }
 
-    //rekisteröidään uus käyttäjä
-    function createNewUser(){
-
-      axios.post(url+"/api/register",{
-       username: user.username,
-       passwordHash: user.password,
-       role: "USER"
-    })
-      .then(function (response) {
-        //kirjaa suoraan sisään kun rekisteröityy
-        getToken();
-        
-
+      //new user register
+      const createNewUser =()=>{
+        axios.post(url+"/api/register",{
+          username: user.username,
+          passwordHash: user.password,
+          role: "USER"
       })
-      .catch(function (error) {
-        console.log(error);
-      });
-    
-    }
-    
-    
+        .then(function (response) {
+          //Auto login on register
+          getToken();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
 
-   const handleChange1 = (event)=>{
-    setUser({...user, [event.target.name]: event.target.value});
-    
-    }
+      }
+      
+  
+  
 
 
 
 return( 
     
-    <main> 
-        {loggedin===false && <div className="loginImage">
-        {sessionStorage.getItem("jwt") === null && <img src={loginImg} width="300" style={{position: 'relative'}} alt="login"/>}
-    </div>}
+<main> 
+    
+{loggedin===false && 
+<div className="loginImage">
+    {sessionStorage.getItem("jwt") === null && <img src={loginImg} width="300" style={{position: 'relative'}} alt="login"/>}
+</div>}
    
-   <Grid
-  container
-  spacing={0}
-  direction="column"
-  alignItems="center"
-  justifyContent="top"
-  style={{ minHeight: '100vh' }}
+<Grid
+container
+spacing={0}
+direction="column"
+alignItems="center"
+justifyContent="top"
+style={{ minHeight: '100vh' }}
 >
 
-{sessionStorage.getItem("jwt") === null && <Box 
-        sx={{
-            
-            bgcolor: 'background.paper',
-            maxwidth: 500,
-            position: 'relative',
-            minHeight: 200,
-        }}
+  {sessionStorage.getItem("jwt") === null && 
+  <Box sx={{   
+    bgcolor: 'background.paper',
+    maxwidth: 500,
+    position: 'relative',
+    minHeight: 200,
+  }}>
+      <AppBar position="static" color="default">
+        <Tabs
+        value={value}
+        onChange={handleChange}
+        indicatorColor="primary"
+        textColor="primary"
+        variant="fullWidth"
+        aria-label="action tabs example"
         >
-        <AppBar position="static" color="default">
-            <Tabs
-            value={value}
-            onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="fullWidth"
-            aria-label="action tabs example"
-            >
-                <Tab label="Admin Login" {...a11yProps(0)} />
-                <Tab label="User login" {...a11yProps(1)} />
-            </Tabs>
-        </AppBar>
-                <SwipeableViews
-                    axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                    index={value}
-                    onChangeIndex={handleChangeIndex}
-                    >
-                        <TabPanel value={value} index={0} dir={theme.direction}>
-                        <div> Admin Login </div>
-                                    <TextField id="outlined-basic" name ="username" label="username" variant="outlined" onChange={handleChange1}/>
-                                    <TextField id="filled-basic" name ="password" type="password" label="password" variant="filled" onChange={handleChange1} />
-                        </TabPanel>
+          <Tab label="Admin Login" {...a11yProps(0)} />
+          <Tab label="User login" {...a11yProps(1)} />
+        </Tabs>
+      </AppBar>
 
-                        <TabPanel value={value} index={1} dir={theme.direction}>
-                        <div> User login </div>
-                                    <TextField id="outlined-basic" name ="username" label="username" variant="outlined" onChange={handleChange1}/>
-                                    <TextField id="filled-basic" name ="password" type="password" label="password" variant="filled" onChange={handleChange1} />
-                        </TabPanel>
-    
-                </SwipeableViews>
-            {fabs.map((fab, index) => (
-                        <Zoom
-                            key={fab.color}
-                            in={value === index}
-                            timeout={transitionDuration}
-                            style={{
-                                transitionDelay: `${value === index ? transitionDuration.exit : 0}ms`,
-                            }}
-                            unmountOnExit
-                            >
-                        <Fab sx={fab.sx} aria-label={fab.label} color={fab.color}>
-                            {fab.icon}
-                        </Fab>
-                        </Zoom>
-            ))}
-        
+      <SwipeableViews
+        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+        index={value}
+        onChangeIndex={handleChangeIndex}
+      >
+              <TabPanel value={value} index={0} dir={theme.direction}>
+              <div> Admin Login </div>
+                          <TextField id="outlined-basic" name ="username" label="username" variant="outlined" onChange={handleChange1}/>
+                          <TextField id="filled-basic" name ="password" type="password" label="password" variant="filled" onChange={handleChange1} />
+              </TabPanel>
 
-        
-        </Box>}
+              <TabPanel value={value} index={1} dir={theme.direction}>
+              <div> User login </div>
+                          <TextField id="outlined-basic" name ="username" label="username" variant="outlined" onChange={handleChange1}/>
+                          <TextField id="filled-basic" name ="password" type="password" label="password" variant="filled" onChange={handleChange1} />
+              </TabPanel>
+
+      </SwipeableViews>
+
+    {fabs.map((fab, index) => (
+      <Zoom
+        key={fab.color}
+        in={value === index}
+        timeout={transitionDuration}
+        style={{transitionDelay: `${value === index ? transitionDuration.exit : 0}ms`,}}
+        unmountOnExit
+      >
+      <Fab sx={fab.sx} aria-label={fab.label} color={fab.color}>
+          {fab.icon}
+      </Fab>
+      </Zoom>
+    ))}
+
+  </Box>}
 
         
         
-        {sessionStorage.getItem("jwt")===null && <Grid container
-  spacing={0}
-  direction="column"
-  alignItems="center"
-  justifyContent="top"
-  style={{ minHeight: '100vh' }}>
-  <p>Register</p>
-        
-        <TextField id="outlined-basic" name="username" value={user.username} label="username" variant="outlined" onChange={handleChange1}/>
-        <TextField id="filled-basic" type="password" name="password" value={user.password} label="password" variant="filled" onChange={handleChange1} />
-        <Button onClick={createNewUser}>Register</Button>
-        </Grid>
-        }
-    
- 
-    
-                      
-
+  {sessionStorage.getItem("jwt")===null && 
+  <Grid container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="top"
+        style={{ minHeight: '100vh' }}
+  >
+    <p>Register</p>
+          
+  <TextField id="outlined-basic" name="username" value={user.username} label="username" variant="outlined" onChange={handleChange1}/>
+  <TextField id="filled-basic" type="password" name="password" value={user.password} label="password" variant="filled" onChange={handleChange1} />
+  <Button onClick={createNewUser}>Register</Button>
+  </Grid>
+  }
+  
 </Grid> 
 
 <Snackbar

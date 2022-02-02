@@ -44,11 +44,11 @@ return (
 </div>
 
 <Routes>
-      <Route path="/" element={<Home />}></Route>
-      <Route path="/users" element={<UserComponent />}></Route>
-      <Route path="/addspot" element={<Addspot />}></Route>
-      <Route path="/carspage"   element={<Carspots />}></Route>
-      <Route path="/loginpage" element={<Admin setLogged={setLogged}/>}></Route>
+  <Route path="/" element={<Home />}></Route>
+  <Route path="/users" element={<UserComponent />}></Route>
+  <Route path="/addspot" element={<Addspot />}></Route>
+  <Route path="/carspage"   element={<Carspots />}></Route>
+  <Route path="/loginpage" element={<Admin setLogged={setLogged}/>}></Route>
 </Routes>
 </BrowserRouter>
  

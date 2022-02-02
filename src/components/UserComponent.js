@@ -23,50 +23,45 @@ export default function UserComponent() {
   return (
   
     
-    <>
-       <Box sx={{
-          
-          alignItems: 'flex-end',
-          p: 1,
-          m: 1,
-          bgcolor: 'background.paper',
-          height: 100,
-        }}>
+  <>
+      <Box sx={{
+        alignItems: 'flex-end',
+        p: 1,
+        m: 1,
+        bgcolor: 'background.paper',
+        height: 100,
+      }}>
       <FormControl variant="standard">
         <InputLabel htmlFor="input-with-icon-adornment">
           With a start adornment
         </InputLabel>
+
         <Input
           id="input-with-icon-adornment"
           startAdornment={
             <InputAdornment position="start">
               <AccountCircle />
-            </InputAdornment>
-          }
+            </InputAdornment>}
         />
       </FormControl>
+
       <TextField
         id="input-with-icon-textfield"
         label="TextField"
+        variant="standard"
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
               <AccountCircle />
-            </InputAdornment>
-          ),
-        }}
-        variant="standard"
-      />
+            </InputAdornment>),
+        }} />
+
       <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
         <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
         <TextField id="input-with-sx" label="With sx" variant="standard" />
       </Box>
     </Box>
     </>
-
-            
-  
-
     
   );
 }
