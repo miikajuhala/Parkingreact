@@ -1,9 +1,10 @@
 
 # First actual React project.
-# Server published as Reactspringserver :)
-
-
-
+# Server published as Reactspringserver
+-Application for parking spots rental (electric car charging for example)
+-Full crud functionalities for adding, deleting and renting parkingspots
+-JWT security implementation
+-Admin panel
 
 
 
